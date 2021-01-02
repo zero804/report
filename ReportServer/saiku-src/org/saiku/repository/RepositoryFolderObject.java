@@ -1,0 +1,107 @@
+/*
+ *  ReportServer
+ *  Copyright (c) 2007 - 2020 InfoFabrik GmbH
+ *  http://reportserver.net/
+ *
+ *
+ * This file is part of ReportServer.
+ *
+ * ReportServer is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+ 
+ 
+package org.saiku.repository;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+
+import org.apache.commons.lang.builder.ToStringBuilder;
+
+import java.util.List;
+
+
+@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
+public class RepositoryFolderObject implements IRepositoryObject {
+
+	private Type type;
+	private String name;
+	private String id;
+	private String path;
+	private List<IRepositoryObject> repoObjects;
+	private List<AclMethod> acl;
+
+	public RepositoryFolderObject(String name, String id, String path, List<AclMethod> acl, List<IRepositoryObject> repoObjects) {
+		this.type = Type.FOLDER;
+		this.name = name;
+		this.id = id;
+		this.path = path;
+		this.repoObjects = repoObjects;
+		this.acl = acl;
+	}
+	public Type getType() {
+		return type;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public String getId() {
+		return id;
+	}
+	
+	public String getPath() {
+		return path;
+	}
+	
+	public List<AclMethod> getAcl() {
+		return acl;
+	}
+
+  @JsonProperty
+	public List<IRepositoryObject> getRepoObjects() {
+		return repoObjects;
+	}
+
+  public void setType(Type type) {
+    this.type = type;
+  }
+
+  public void setName(String name) {
+    this.name = name;
+  }
+
+  public void setId(String id) {
+    this.id = id;
+  }
+
+  public void setPath(String path) {
+    this.path = path;
+  }
+
+  public void setRepoObjects(List<IRepositoryObject> repoObjects) {
+    this.repoObjects = repoObjects;
+  }
+
+  public void setAcl(List<AclMethod> acl) {
+    this.acl = acl;
+  }
+
+  @Override
+  public String toString() {
+    return ToStringBuilder.reflectionToString(this);
+  }
+}

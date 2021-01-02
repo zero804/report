@@ -1,0 +1,100 @@
+/*
+ *  ReportServer
+ *  Copyright (c) 2007 - 2020 InfoFabrik GmbH
+ *  http://reportserver.net/
+ *
+ *
+ * This file is part of ReportServer.
+ *
+ * ReportServer is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+ 
+ 
+/*
+// This software is subject to the terms of the Eclipse Public License v1.0
+// Agreement, available at the following URL:
+// http://www.eclipse.org/legal/epl-v10.html.
+// You must accept the terms of that agreement to use this software.
+//
+// Copyright (C) 2004-2005 TONBELLER AG
+// Copyright (C) 2006-2010 Pentaho and others
+// All Rights Reserved.
+*/
+package mondrian3.rolap;
+
+import mondrian3.rolap.aggmatcher.AggStar;
+import mondrian3.rolap.sql.MemberChildrenConstraint;
+import mondrian3.rolap.sql.SqlQuery;
+
+import java.util.List;
+
+/**
+ * Restricts the SQL result set to the parent member of a
+ * MemberChildren query.  If called with a calculated member an
+ * exception will be thrown.
+ */
+public class DefaultMemberChildrenConstraint
+    implements MemberChildrenConstraint
+{
+    private static final MemberChildrenConstraint instance =
+        new DefaultMemberChildrenConstraint();
+
+    protected DefaultMemberChildrenConstraint() {
+    }
+
+    public void addMemberConstraint(
+        SqlQuery sqlQuery,
+        RolapCube baseCube,
+        AggStar aggStar,
+        RolapMember parent)
+    {
+        SqlConstraintUtils.addMemberConstraint(
+            sqlQuery, baseCube, aggStar, parent, true);
+    }
+
+    public void addMemberConstraint(
+        SqlQuery sqlQuery,
+        RolapCube baseCube,
+        AggStar aggStar,
+        List<RolapMember> parents)
+    {
+        boolean exclude = false;
+        SqlConstraintUtils.addMemberConstraint(
+            sqlQuery, baseCube, aggStar, parents, true, false, exclude);
+    }
+
+    public void addLevelConstraint(
+        SqlQuery query,
+        RolapCube baseCube,
+        AggStar aggStar,
+        RolapLevel level)
+    {
+    }
+
+    public String toString() {
+        return "DefaultMemberChildrenConstraint";
+    }
+
+    public Object getCacheKey() {
+        // we have no state, so all instances are equal
+        return this;
+    }
+
+    public static MemberChildrenConstraint instance() {
+        return instance;
+    }
+}
+
+// End DefaultMemberChildrenConstraint.java
+

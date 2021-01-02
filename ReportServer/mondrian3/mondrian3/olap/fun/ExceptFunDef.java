@@ -1,0 +1,91 @@
+/*
+ *  ReportServer
+ *  Copyright (c) 2007 - 2020 InfoFabrik GmbH
+ *  http://reportserver.net/
+ *
+ *
+ * This file is part of ReportServer.
+ *
+ * ReportServer is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+ 
+ 
+/*
+// This software is subject to the terms of the Eclipse Public License v1.0
+// Agreement, available at the following URL:
+// http://www.eclipse.org/legal/epl-v10.html.
+// You must accept the terms of that agreement to use this software.
+//
+// Copyright (C) 2006-2011 Pentaho
+// All Rights Reserved.
+*/
+package mondrian3.olap.fun;
+
+import mondrian3.calc.*;
+import mondrian3.calc.impl.AbstractListCalc;
+import mondrian3.calc.impl.ArrayTupleList;
+import mondrian3.mdx.ResolvedFunCall;
+import mondrian3.olap.*;
+
+import java.util.*;
+
+/**
+ * Definition of the <code>Except</code> MDX function.
+ *
+ * @author jhyde
+ * @since Mar 23, 2006
+ */
+class ExceptFunDef extends FunDefBase {
+    static final ReflectiveMultiResolver Resolver =
+        new ReflectiveMultiResolver(
+            "Except",
+            "Except(<Set1>, <Set2>[, ALL])",
+            "Finds the difference between two sets, optionally retaining duplicates.",
+            new String[]{"fxxx", "fxxxy"},
+            ExceptFunDef.class);
+
+    public ExceptFunDef(FunDef dummyFunDef) {
+        super(dummyFunDef);
+    }
+
+    public Calc compileCall(ResolvedFunCall call, ExpCompiler compiler) {
+        // todo: implement ALL
+        final ListCalc listCalc0 = compiler.compileList(call.getArg(0));
+        final ListCalc listCalc1 = compiler.compileList(call.getArg(1));
+        return new AbstractListCalc(call, new Calc[] {listCalc0, listCalc1})
+        {
+            public TupleList evaluateList(Evaluator evaluator) {
+                TupleList list0 = listCalc0.evaluateList(evaluator);
+                if (list0.isEmpty()) {
+                    return list0;
+                }
+                TupleList list1 = listCalc1.evaluateList(evaluator);
+                if (list1.isEmpty()) {
+                    return list0;
+                }
+                final Set<List<Member>> set1 = new HashSet<List<Member>>(list1);
+                final TupleList result =
+                    new ArrayTupleList(list0.getArity(), list0.size());
+                for (List<Member> tuple1 : list0) {
+                    if (!set1.contains(tuple1)) {
+                        result.add(tuple1);
+                    }
+                }
+                return result;
+            }
+        };
+    }
+}
+
+// End ExceptFunDef.java
